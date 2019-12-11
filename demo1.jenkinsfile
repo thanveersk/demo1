@@ -22,6 +22,47 @@ pipeline{
                    mvn test
 
                   '''
+                  pipeline{
+
+    agent any
+
+      stages {
+          stage('git checkout'){
+              steps{
+                  git 'https://github.com/web3j/sample-project-maven.git'
+              }
+          }
+          stage('validation'){
+           steps{
+               sh '''
+              mvn validate
+
+               '''
+           }
+          }
+          stage('test'){
+              steps{
+                  sh '''
+                   mvn test
+
+                  '''
+              }
+          }
+            stage("sonarqube analysis "){
+             steps{
+               withSonarQubeEnv('sonarcube'){
+
+                sh '''
+                mvn sonar:sonar \
+               -Dsonar.projectKey=bass \
+               -Dsonar.host.url=http://13.232.241.226:9000 \
+             -Dsonar.login=55b6f003f5326df005f151eb3c3fa18918cf61ec
+      }
+
+   }   
+
+    
+}
               }
           }
       }
